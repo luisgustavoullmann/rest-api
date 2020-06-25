@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TopicoAtulizar { //Só pode atualizar esses dois campos
+public class TopicoAtulizarDto { //Só pode atualizar esses dois campos
     @NotNull
     @NotEmpty
     private String titulo;

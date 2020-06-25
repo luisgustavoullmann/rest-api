@@ -1,7 +1,7 @@
 package com.projeto.forum.controller;
 
 import com.projeto.forum.controller.dto.DetalhesTopicoDto;
-import com.projeto.forum.controller.dto.TopicoAtulizar;
+import com.projeto.forum.controller.dto.TopicoAtulizarDto;
 import com.projeto.forum.controller.dto.TopicoDto;
 import com.projeto.forum.controller.dto.TopicoPostDto;
 import com.projeto.forum.modelo.Topico;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -22,7 +21,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -96,7 +94,7 @@ public class TopicosController {
     @PutMapping("/{id}")
     @Transactional
     @CacheEvict(value = "listTopicos", allEntries = true)
-    public ResponseEntity<TopicoDto> atualizar(@PathVariable("id") Long id, @RequestBody @Valid TopicoAtulizar topicoAtulizar){
+    public ResponseEntity<TopicoDto> atualizar(@PathVariable("id") Long id, @RequestBody @Valid TopicoAtulizarDto topicoAtulizar){
         Optional<Topico> optional = topicoRepository.findById(id);
         if(optional.isPresent()){
             Topico topico = topicoAtulizar.atualizar(id, topicoRepository);
