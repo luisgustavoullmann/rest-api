@@ -8,6 +8,10 @@ import com.projeto.forum.modelo.Topico;
 import com.projeto.forum.repositories.CursoRepository;
 import com.projeto.forum.repositories.TopicoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,17 +34,27 @@ public class TopicosController {
     private final CursoRepository cursoRepository;
 
     @GetMapping
-    public List<TopicoDto> getLista(String nomeCurso){
+    public Page<TopicoDto> getLista(@RequestParam(required = false) String nomeCurso, //required = false, o nomeCurso é opcional na requisição
+                                    @RequestParam int page,
+                                    @RequestParam int qtd,
+                                    @RequestParam String ordenacao){
+        //Paginação do JPA/Spring Data
+        //Page retorna apenas um determinada quantidade por página ao contrário do List que retorna tudo
+        //http://localhost:8080/topicos?page=0&qtd=2&ordenacao=id ordenacao pelo campo id
+        //Ordenacao - pode fazer um if/else para ser ASC ou DESC
+        Pageable pageable = PageRequest.of(page, qtd, Sort.Direction.ASC, ordenacao);
+
+        //Lógica
         if(nomeCurso == null){
-            List<Topico> topicos = topicoRepository.findAll();
-            return TopicoDto.listTopico(topicos);
+            Page<Topico> topicos = topicoRepository.findAll(pageable);
+            return TopicoDto.listTopico(topicos); //list o DTO
         } else {
             //Curso Entidade que tem relacionamento com a Entidade Topico (Repository)
             //se usar findByCursoNome, mesmo que seja topicoRepository,
             // o JPA irá encontrar o nome (atributo) de Curso por conta do relacionamento
             //desde que não tenha nenhum atributo "cursoNome" na entidade Topico
             // com Curso_Nome (Curso é o relacionamento de topico e Nome é o atributo de curso)
-            List<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso);
+            Page<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso, pageable);
             return TopicoDto.listTopico(topicos);
         }
     }

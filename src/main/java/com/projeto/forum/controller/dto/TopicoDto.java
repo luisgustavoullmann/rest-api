@@ -2,6 +2,7 @@ package com.projeto.forum.controller.dto;
 
 import com.projeto.forum.modelo.Topico;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,8 +28,12 @@ public class TopicoDto { //Controla quais campos quero devolver no endpoint
         this.dataCriacao = topico.getDataCriacao();
     }
 
-    public static List<TopicoDto> listTopico(List<Topico> topicos) {
+    public static Page<TopicoDto> listTopico(Page<Topico> topicos) { //alterando aonde era List para Page
+        //List - alterar os PAGE para list, se quiser retornar tudo.
         //Essa linha substitui o forEach para os elementos da list
-        return topicos.stream().map(TopicoDto::new).collect(Collectors.toList());
+        //return topicos.stream().map(TopicoDto::new).collect(Collectors.toList());
+
+        //Page
+        return topicos.map(TopicoDto::new);
     }
 }
