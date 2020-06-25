@@ -3,6 +3,7 @@ package com.projeto.forum.config.security;
 import com.projeto.forum.modelo.Usuario;
 import com.projeto.forum.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,9 +15,9 @@ import java.util.Optional;
  * Created by Luis Gustavo Ullmann on 25/06/2020
  */
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor - não usar
 public class AutenticacaoService implements UserDetailsService {
-
+    @Autowired
     private UsuarioRepository usuarioRepository; //Cria o repository
 
     @Override
