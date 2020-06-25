@@ -8,6 +8,8 @@ import com.projeto.forum.modelo.Topico;
 import com.projeto.forum.repositories.CursoRepository;
 import com.projeto.forum.repositories.TopicoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,8 +37,9 @@ public class TopicosController {
     private final CursoRepository cursoRepository;
 
     @GetMapping
+    @Cacheable(value = "listTopicos") //id do Cache = listTopicos - não esqueça de habilitar na class main
     public Page<TopicoDto> getLista(@RequestParam(required = false) String nomeCurso, //required = false, o nomeCurso é opcional na requisição
-                                    @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+                                    @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
         //Page 1 -
         // @RequestParam int page,
 //        @RequestParam int qtd,
@@ -51,7 +54,6 @@ public class TopicosController {
         //habilitar modulo do Spring Data - Classe main @EnableSpringDataWebSupport
         //http://localhost:8080/topicos?page=0&size=2&sort=id,asc - os atributos precisam estar em ingles e sort=att,(virgula)asc/desc
         //ordenando por dois/mais campos - &sort=att, quantos sorts forem necessários - http://localhost:8080/topicos?page=0&size=3&sort=titulo,asc&sort=dataCriacao,desc
-
         //Fixando - @PageableDefault - @PageableDefault(sort = "id", direction = Sort.Direction.DESC)
 
 
@@ -83,6 +85,7 @@ public class TopicosController {
 
     @PostMapping
     @Transactional
+    @CacheEvict(value = "listTopicos", allEntries = true) //limpa o cache toda vez que houver uma transação, para evitar conflito
     public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoPostDto topicoPostDto, UriComponentsBuilder uriComponentsBuilder){
         Topico topico = topicoPostDto.converter(cursoRepository); //metodo que converte o topicoForm em topico, passando um curso
         topicoRepository.save(topico);
@@ -92,6 +95,7 @@ public class TopicosController {
 
     @PutMapping("/{id}")
     @Transactional
+    @CacheEvict(value = "listTopicos", allEntries = true)
     public ResponseEntity<TopicoDto> atualizar(@PathVariable("id") Long id, @RequestBody @Valid TopicoAtulizar topicoAtulizar){
         Optional<Topico> optional = topicoRepository.findById(id);
         if(optional.isPresent()){
@@ -103,6 +107,7 @@ public class TopicosController {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @CacheEvict(value = "listTopicos", allEntries = true)
     public ResponseEntity<?> remover(@PathVariable("id") Long id){
         Optional<Topico> optional = topicoRepository.findById(id);
         if(optional.isPresent()){
