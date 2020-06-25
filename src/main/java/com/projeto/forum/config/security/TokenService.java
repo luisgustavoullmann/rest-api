@@ -1,6 +1,7 @@
 package com.projeto.forum.config.security;
 
 import com.projeto.forum.modelo.Usuario;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
@@ -47,5 +48,10 @@ public class TokenService {
         } catch (Exception e){
             return false; //invalido
         }
+    }
+
+    public Long getIdUsuario(String token) {
+        Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody(); //devolve o corpo do token
+        return Long.parseLong(claims.getSubject());
     }
 }

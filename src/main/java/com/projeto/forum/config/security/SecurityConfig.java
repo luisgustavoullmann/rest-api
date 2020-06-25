@@ -1,5 +1,6 @@
 package com.projeto.forum.config.security;
 
+import com.projeto.forum.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Override //impl com JWT
     @Bean
@@ -56,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //.and().formLogin(); //gera o form de autenticação - agora o Login é usando o JWT, não tem mais o form de login do Spring
         .and().csrf().disable() //evitar ataques do tipo csrf
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //politica de criação de sessão (pom jjwt)
-        .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+        .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
 
     }
 
