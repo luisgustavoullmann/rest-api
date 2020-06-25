@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Created by Luis Gustavo Ullmann on 25/06/2020
@@ -23,6 +24,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AutenticacaoService autenticacaoService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Override //impl com JWT
     @Bean
@@ -51,7 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .anyRequest().authenticated() //qualquer outra request precisa estar autenticada - Add UserDetails na Classe que representa o Usuario/Perfil
         //.and().formLogin(); //gera o form de autenticação - agora o Login é usando o JWT, não tem mais o form de login do Spring
         .and().csrf().disable() //evitar ataques do tipo csrf
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //politica de criação de sessão (pom jjwt)
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) //politica de criação de sessão (pom jjwt)
+        .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 
     }
 
