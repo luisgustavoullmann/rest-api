@@ -55,8 +55,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //URL GET liberada para qualquer um idependente do metodo
         .antMatchers(HttpMethod.GET,"/topicos").permitAll()
         .antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
-        .antMatchers(HttpMethod.GET, "/actuator/**").permitAll() //Teste permitAll, produção precisa mudar a permissão
         .antMatchers(HttpMethod.POST, "/auth").permitAll() //URL de login
+        .antMatchers(HttpMethod.GET, "/actuator/**").permitAll() //Teste permitAll, produção precisa mudar a permissão
         .anyRequest().authenticated() //qualquer outra request precisa estar autenticada - Add UserDetails na Classe que representa o Usuario/Perfil
         //.and().formLogin(); //gera o form de autenticação - agora o Login é usando o JWT, não tem mais o form de login do Spring
         .and().csrf().disable() //evitar ataques do tipo csrf
@@ -68,7 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Config recursos estáticos - requisições, JS CSS img e etc..
     @Override
     public void configure(WebSecurity web) throws Exception {
-
+        web.ignoring()
+                .antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**");
     }
 
     //Gerando o encode de uma senha para testar - data.sql
