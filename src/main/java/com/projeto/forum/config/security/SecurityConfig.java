@@ -55,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //URL GET liberada para qualquer um idependente do metodo
         .antMatchers(HttpMethod.GET,"/topicos").permitAll()
         .antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
+        .antMatchers(HttpMethod.GET, "/actuator/**").permitAll() //Teste permitAll, produção precisa mudar a permissão
         .antMatchers(HttpMethod.POST, "/auth").permitAll() //URL de login
         .anyRequest().authenticated() //qualquer outra request precisa estar autenticada - Add UserDetails na Classe que representa o Usuario/Perfil
         //.and().formLogin(); //gera o form de autenticação - agora o Login é usando o JWT, não tem mais o form de login do Spring
